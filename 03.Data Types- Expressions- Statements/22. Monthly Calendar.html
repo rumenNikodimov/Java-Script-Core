@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monthly Calendar</title>
+    <style>
+        .prev-month, .next-month { color: #CCC }
+        .today { font-weight: bold; background: #DDD; }
+        .title { background: #AAAAFF; margin: 10px 0; padding:5px }
+        table { border: 1px solid #CCC;}
+        td { text-align: center; }
+        #calendarCode { width: 100%; }
+    </style>
+    <script>
+        function calendar([day, month, year])
+        {
+            let startDayCounter = 1; // Will be used to get month days day by day
+            let result = '<table>\n';
+            result += '  <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>\n'
+            let currDate = new Date(year, month -1, day); // Current day
+            // Get first day of month
+            let startOfCurrMonth = new Date(currDate);
+            startOfCurrMonth.setDate(1);
+            // Get remaining days of previous month
+            // They are equal to start of current month day
+            let remainingDaysFromLastMonth = startOfCurrMonth.getDay();
+            let startDateToPrintFromPrevMonth = new Date(startOfCurrMonth);
+            startDateToPrintFromPrevMonth.setDate(startDateToPrintFromPrevMonth.getDate() - remainingDaysFromLastMonth);
+            // Add days from prev month to first week
+            let startDay = startDateToPrintFromPrevMonth.getDate();
+            let endDay = startDay + remainingDaysFromLastMonth - 1;
+            let  firstWeek = '  <tr>';
+            for (let day = startDay; day <= endDay; day++) {
+                firstWeek += `<td class="prev-month">${day}</td>`;
+            }
+            // Add remaining days from first week, that are from current month
+            for (let i = remainingDaysFromLastMonth; i < 7 ; i++) {
+                if(startDayCounter === currDate.getDate()){
+                    firstWeek += `<td class="today">${startDayCounter++}</td>`;
+                } else{
+                    firstWeek += `<td>${startDayCounter++}</td>`;
+                }
+            }
+            result += firstWeek + '</tr>\n';
+// **********************************************************************
+            // Get current month last day
+            let lastDayOfCurrMonth = new Date(startOfCurrMonth);
+            lastDayOfCurrMonth.setMonth(lastDayOfCurrMonth.getMonth() + 1);
+            lastDayOfCurrMonth.setDate(0);
+            // Get all full weeks from current month
+            let fullWeeks = Math.floor((lastDayOfCurrMonth.getDate() - startDayCounter) / 7);
+            for (let week = 0; week < fullWeeks; week++) {
+                let currWeek = '  <tr>';
+                for (let i = 0; i < 7 ; i++) {
+                    if(startDayCounter === currDate.getDate()){
+                        currWeek += `<td class="today">${startDayCounter++}</td>`;
+                    } else{
+                        currWeek += `<td>${startDayCounter++}</td>`;
+                    }
+                }
+                currWeek += '</tr>\n';
+                result += currWeek;
+            }
+// ***********************************************************************
+            // Print remaining days if any
+            if(startDayCounter < lastDayOfCurrMonth.getDate()){
+                let lastWeek = '  <tr>';
+                // Days to add from next month
+                let daysToAddFromNextMonth = 7 - (lastDayOfCurrMonth.getDate() - startDayCounter + 1);
+                // Add remaining days from current month
+                for (let i = startDayCounter; i <= lastDayOfCurrMonth.getDate(); i++) {
+                    if(startDayCounter === currDate.getDate()){
+                        lastWeek += `<td class="today">${startDayCounter++}</td>`;
+                    } else{
+                        lastWeek += `<td>${startDayCounter++}</td>`;
+                    }
+                }
+                // Add days from next month
+                for (let dayOfNextMonth = 1; dayOfNextMonth <= daysToAddFromNextMonth; dayOfNextMonth++) {
+                    lastWeek += `<td class="next-month">${dayOfNextMonth}</td>`;
+                }
+                result += lastWeek + '</tr>\n';
+            }
+            result += '</table>\n';
+            return result;
+        }
+    </script>
+</head>
+
+<body>
+Day: <input id="day" type="number" value="4" />
+Month: <input id="month" type="number" value="9" />
+Year: <input id="year" type="number" value="2016" />
+<input type="button" value="Show"
+       onclick="let calendarHTML =
+            calendar([document.getElementById('day').value,
+                document.getElementById('month').value,
+                document.getElementById('year').value]);
+            document.getElementById('calendar').innerHTML = calendarHTML;
+            document.getElementById('calendarCode').innerText = calendarHTML" />
+<div class="title">Calendar:</div>
+<div id="calendar">Calendar will be shown here</div>
+<div class="title">HTML:</div>
+<textarea rows="12" id="calendarCode"></textarea>
+</body>
+
+</html>

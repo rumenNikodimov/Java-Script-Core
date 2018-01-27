@@ -6,4 +6,4 @@ function oddNumbers(number){
     }
 }
 
-oddNumbers(7)
+oddNumbers(21)
