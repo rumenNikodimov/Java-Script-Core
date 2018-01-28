@@ -6,7 +6,7 @@ function increaseSequence(input) {
         let currentElement = result[result.length -1]
         let nextElement = input[i]
 
-        if(currentElement < nextElement){
+        if(currentElement <= nextElement){
             result.push(nextElement)
         } else {
             continue
